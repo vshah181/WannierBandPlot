@@ -7,6 +7,7 @@ Plot the bandstructures of wannier90 _hr.dat files using Fortran and gnuplot
   
 *Output files:*
 - First is wannier_band.dat This is the band structure in a format that gnuplot can work with
+  - An rgb variable is given to show the orbital projections. Equally spaced hues are chosen for the base colours to give the highest contrast 
 - Second is wannier_band.gnu. This is a simple gnuplot script to plot wannier_band.dat
 ## kpoints file
 - This file needs the filename 'kpoints'
