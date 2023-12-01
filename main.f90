@@ -1,10 +1,11 @@
 program band_plot
 use file_parsing
+use colour_calculation, only get_colours
 implicit none
     real*8, allocatable :: kp(:,:), kdists(:), hsym_kdists(:)
     integer :: nkp, ik
     integer*4 :: info, lwork
-    real*8, allocatable :: rwork(:), energies(:, :)
+    real*8, allocatable :: rwork(:), energies(:, :), colours(:, :, :)
     complex*16, allocatable :: work(:), kham(:, :)
 
     call read_kpoints ! nkpath, high_sym_pts, nkpt_per_path
@@ -14,7 +15,8 @@ implicit none
         hsym_kdists)
 
     call read_hr ! r_list, r_ham_list, weights, num_r_pts, num_bands
-    allocate(energies(nkp, num_bands), kham(num_bands, num_bands))
+    allocate(energies(nkp, num_bands), kham(num_bands, num_bands),             &
+        colours(3, nkp, num_bands))
 
     lwork=max(1, 2*num_bands-1)
     allocate(work(max(1, lwork)), rwork(max(1, 3*num_bands-2)))
