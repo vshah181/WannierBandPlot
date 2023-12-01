@@ -1,7 +1,7 @@
 module file_parsing
 implicit none
 private
-    character(len=22), parameter :: hamiltonian="KTaO3_VASP_hr.dat"
+    character(len=22), parameter :: hamiltonian="KTaO3_hr.dat"
     character(len=22), parameter :: kpt_file="kpoints"
     complex*16, allocatable :: r_ham_list(:, :, :)
     real*8, allocatable :: high_sym_pts(:, :)
