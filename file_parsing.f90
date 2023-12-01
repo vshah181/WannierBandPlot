@@ -6,6 +6,7 @@ private
     complex*16, allocatable :: r_ham_list(:, :, :)
     real*8, allocatable :: high_sym_pts(:, :)
     integer, allocatable :: r_list(:, :), weights(:)
+    character, allocatable :: high_sym_pt_symbols(:)
     integer :: num_bands, num_r_pts, nkpt_per_path, nkpath
     public num_bands, num_r_pts, weights, r_list, r_ham_list, read_hr,         &
            write_bands, high_sym_pts, nkpath, nkpt_per_path, read_kpoints
@@ -37,34 +38,56 @@ contains
         open(102, file=kpt_file)
         read(102, *) nkpt_per_path
         read(102, *) nkpath
-        allocate(high_sym_pts(nkpath, 3))
+        allocate(high_sym_pts(nkpath, 3), high_sym_pt_symbols(nkpath))
         do i=1, nkpath
-            read(102, *) high_sym_pts(i, :)
+            read(102, *) high_sym_pts(i, :), high_sym_pt_symbols(i)
         end do
         close(102)
         nkpath=nkpath-1
+        do i=1,nkpath+1
+            write(*,*) high_sym_pts(i,:), high_sym_pt_symbols(i)
+        end do
     end subroutine read_kpoints
 
     subroutine write_bands(nkp, num_bands, kdists, energies)
         integer, intent(in) :: nkp, num_bands
         real*8, intent(in) :: kdists(nkp), energies(nkp, num_bands)
         logical :: file_exist
-        character(len=22) :: ofname='band.dat'
+        character(len=22) :: ofname='wannier_band.dat'
         integer :: ik, ib
 
         inquire(file=ofname, exist=file_exist) 
         if (file_exist) then 
-            open(103, file=ofname, action='write', status='replace')
+            open(201, file=ofname, action='write', status='replace')
         else
-            open(103, file=ofname, status='new')
+            open(201, file=ofname, status='new')
         endif
 
         do ib=1, num_bands
-            if(ib .gt. 1)  write(103, fmt='(a)') ' '
+            if(ib .gt. 1)  write(201, fmt='(a)') ' '
             do ik=1, nkp
-                write(103, fmt='(2f12.7)') kdists(ik), energies(ik, ib)
+                write(201, fmt='(2f12.7)') kdists(ik), energies(ik, ib)
             end do
         end do
-        close(103)
+        close(201)
     end subroutine write_bands
+
+    ! subroutine write_gnuplot_file
+    !     character(len=22) :: ofname'wannier_band.gnu'
+    !     logical :: file_exist
+
+    !     inquire(file=ofname, exist=file_exist) 
+    !     if (file_exist) then 
+    !         open(202, file=ofname, action='write', status='replace')
+    !     else
+    !         open(202, file=ofname, status='new')
+    !     endif
+
+    !     write(103, fmt='(a)') 'set encoding iso_8858_1'
+    !     write(103, fmt='(a)', advance='no') 'set terminal pdfcairo enchanced'
+    !     write(103, fmt='(4a)', advance='no') ' font' '"' 'Arial' '"'
+    !     write(103, fmt='(a)') ' transparent size 17.8cm, 12.7cm'                   
+    !     write(103, fmt='(4a)') 'set output ' '"' 'wannier_band.pdf' '"'
+
+    ! end subroutine write_gnuplot_file
 end module file_parsing
