@@ -23,4 +23,6 @@ implicit none
         call zheev('V', 'L', num_bands, k_ham, num_bands, energies(ik, :),     &
             work, lwork, rwork, info)
     end do
+
+    call write_bands(nkp, num_bands, kdists, energies)
 end program band_plot

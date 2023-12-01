@@ -45,6 +45,26 @@ contains
         nkpath=nkpath-1
     end subroutine read_kpoints
 
-    subroutine write_bands(nkp, kdists, energies)
+    subroutine write_bands(nkp, num_bands, kdists, energies)
+        integer, intent(in) :: nkp, num_bands
+        real*8, intent(in) kdists(nkp), energies(nkp, num_bands)
+        logical :: file_exist
+        character(len=22) :: ofname='band.dat'
+        integer :: ik, ib
+
+        inquire(file=ofname, exist=file_exist) 
+        if (file_exist) then 
+            open(103, file=ofname, action='write', status='replace')
+        else
+            open(103, file=ofname, status='new')
+        endif
+
+        do ib=1, num_bands
+            if(ib .gt. 1)  write(103, fmt='(a)') ' '
+            do ik=1, nkp
+                write(103, fmt='(2f12.7)') kdists(ik), energies(ik, ib)
+            end do
+        end do
+        close(103)
     end subroutine write_bands
 end module file_parsing
