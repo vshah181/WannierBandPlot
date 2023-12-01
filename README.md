@@ -1,8 +1,13 @@
 # WannierBandPlot
 Plot the bandstructures of wannier90 _hr.dat files using Fortran and gnuplot
-Takes two input files: 
+
+*Input files:* 
 - First is the _hr.dat output file from a wannier 90 calculation.
 - Second is a kpoints file.
+  
+*Output files:*
+- First is wannier_band.dat This is the band structure in a format that gnuplot can work with
+- Second is wannier_band.gnu. This is a simple gnuplot script to plot wannier_band.dat
 ## kpoints file
 - This file needs the filename 'kpoints'
 1. number of k points per path
