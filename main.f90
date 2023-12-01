@@ -25,8 +25,9 @@ implicit none
             num_r_pts)
         call zheev('V', 'L', num_bands, kham, num_bands, energies(ik, :), work,&
             lwork, rwork, info)
+        call get_colours(num_bands, 3, kham, colours(:, ik, :))
     end do
 
-    call write_bands(nkp, num_bands, kdists, energies)
+    call write_bands(nkp, num_bands, kdists, energies, colours)
     call write_gnuplot_file(nkpath, hsym_kdists)
 end program band_plot

@@ -1,7 +1,7 @@
 module file_parsing
 implicit none
 private
-    character(len=22), parameter :: hamiltonian="KTaO3_hr.dat"
+    character(len=22), parameter :: hamiltonian="SrTiO3_hr.dat"
     character(len=22), parameter :: kpt_file="kpoints"
     complex*16, allocatable :: r_ham_list(:, :, :)
     real*8, allocatable :: high_sym_pts(:, :)
@@ -47,12 +47,13 @@ contains
         nkpath=nkpath-1
     end subroutine read_kpoints
 
-    subroutine write_bands(nkp, num_bands, kdists, energies)
+    subroutine write_bands(nkp, num_bands, kdists, energies, colours)
         integer, intent(in) :: nkp, num_bands
-        real*8, intent(in) :: kdists(nkp), energies(nkp, num_bands)
+        real*8, intent(in) :: kdists(nkp), energies(nkp, num_bands),           &
+            colours(3, nkp, num_bands)
         logical :: file_exist
         character(len=22) :: ofname='wannier_band.dat'
-        integer :: ik, ib
+        integer :: ik, ib, red, green, blue
 
         inquire(file=ofname, exist=file_exist) 
         if (file_exist) then 
@@ -64,7 +65,11 @@ contains
         do ib=1, num_bands
             if(ib .ne. 1)  write(201, fmt='(a)') ' '
             do ik=1, nkp
-                write(201, fmt='(2f12.7)') kdists(ik), energies(ik, ib)
+                red=nint(colours(1, ik, ib))
+                green=nint(colours(2, ik, ib))
+                blue=nint(colours(3, ik, ib))
+                write(201, fmt='(2f12.7,3i5)') kdists(ik), energies(ik, ib),   &
+                    red, green, blue
             end do
         end do
         close(201)
@@ -108,13 +113,14 @@ contains
         write(202, fmt='(4a)') 'set tics textcolor rgb ', '"','black','"'
         write(202, fmt='(4a)') 'set ylabel ', '"','{/:Italic E} (eV)', '"'
         write(202, fmt='(a)') 'unset key'
+        write(202, fmt='(a)') 'rgb(r,g,b) = int(r)*65536 + int(g)*256 + int(b)'
         do it=1, nkpath+1
             write(202, fmt='(a,f10.7,a,f10.7,a)') 'set arrow from ',           &
             hsym_kdists(it), ', graph(0,0) to ', hsym_kdists(it),              &
             ', graph(1,1) nohead'
         end do
         write(202, fmt='(5a)') 'plot ', '"', 'wannier_band.dat', '"',          &
-            'using 1:2 with line' 
+            'using 1:2:(rgb($3,$4,$5)) with line lw 2.0 lc rgb variable' 
         close(202)
     end subroutine write_gnuplot_file
 

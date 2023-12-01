@@ -8,27 +8,28 @@ contains
         complex*16, intent(in) :: k_ham(num_bands, num_bands)
         real*8, intent(out) :: colours(3, num_bands)
         complex*16 :: eigenvector(num_bands), miniket(n_orb)
-        real*8 :: hue_step, hues(n_orb), minivector(n_orb), element, hsl(3), hue
+        real*8 :: hue_step, hues(n_orb), element, hsl(3),   &
+            base_colours(3, n_orb)
         integer :: ib, ih, io, jo
         colours = 0d0
         
         hue_step=360.0/n_orb
         do ih=1, n_orb
             hues(ih)=hue_step*(ih-1)
+            hsl=(/ hues(ih), 1d0, 0.5d0 /)
+            call hsl_to_rgb(hsl, base_colours(:, ih))
         end do
+
         do ib=1, num_bands
             eigenvector=k_ham(:, ib)
-            hue=0d0
             do io=1, num_bands, n_orb
                 miniket = eigenvector(io:io+n_orb-1)
                 do jo=1, n_orb
                     element=miniket(jo)*dconjg(miniket(jo))
-                    minivector(jo)=real(element)
+                    colours(:, ib)=colours(:, ib)                              &
+                    +(real(element)*base_colours(:, jo))
                 end do
-                hue=hue+dot_product(hues, minivector)
             end do
-            hsl=(/ hue, 1d0, 0.5d0 /)
-            call hsl_to_rgb(hsl, colours(:, ib))
         end do
     end subroutine get_colours
 
@@ -55,9 +56,9 @@ contains
         end if
 
         m=hsl(3)-(0.5d0*chroma)
-        rgb(1)=rgb_p(1)+m
-        rgb(2)=rgb_p(2)+m
-        rgb(3)=rgb_p(3)+m
+        rgb(1)=(rgb_p(1)+m)*255d0
+        rgb(2)=(rgb_p(2)+m)*255d0
+        rgb(3)=(rgb_p(3)+m)*255d0
 
     end subroutine hsl_to_rgb
 end module colour_calculation
