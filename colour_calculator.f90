@@ -5,15 +5,15 @@ public get_colours
 contains
     subroutine get_colours(num_bands, n_orb, k_ham, colours)
         integer, intent(in) :: num_bands, n_orb
-        complex*16, intent(in) :: k_ham
+        complex*16, intent(in) :: k_ham(num_bands, num_bands)
         real*8, intent(out) :: colours(3, num_bands)
-        complex*16 :: eigenvector(num_bands), miniket(n_orb), 
-        real*8 :: hue_step, hues(n_orb), minivector(norb), element, hsl(3)
+        complex*16 :: eigenvector(num_bands), miniket(n_orb)
+        real*8 :: hue_step, hues(n_orb), minivector(n_orb), element, hsl(3), hue
         integer :: ib, ih, io, jo
         colours = 0d0
         
-        hue_step=360.0/norb
-        do ih=1, norb
+        hue_step=360.0/n_orb
+        do ih=1, n_orb
             hues(ih)=hue_step*(ih-1)
         end do
         do ib=1, num_bands
@@ -33,8 +33,8 @@ contains
     end subroutine get_colours
 
     subroutine hsl_to_rgb(hsl, rgb)
-        real*8, intent(in) :: hsl
-        real*8, intent(out) :: rgb
+        real*8, intent(in) :: hsl(3)
+        real*8, intent(out) :: rgb(3)
         real*8 :: chroma, hp, x, rgb_p(3), m
 
         chroma=(1-dabs(2*hsl(3)-1))*hsl(2)

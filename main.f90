@@ -1,6 +1,6 @@
 program band_plot
 use file_parsing
-use colour_calculation, only get_colours
+use colour_calculation, only : get_colours
 implicit none
     real*8, allocatable :: kp(:,:), kdists(:), hsym_kdists(:)
     integer :: nkp, ik
