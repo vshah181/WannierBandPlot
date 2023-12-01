@@ -59,6 +59,5 @@ contains
         rgb(1)=(rgb_p(1)+m)*255d0
         rgb(2)=(rgb_p(2)+m)*255d0
         rgb(3)=(rgb_p(3)+m)*255d0
-
     end subroutine hsl_to_rgb
 end module colour_calculation
