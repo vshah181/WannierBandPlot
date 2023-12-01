@@ -1,5 +1,5 @@
 OBJFILES = constants.o file_parsing.o fourier_transform.o kpath_maker.o main.o
-PROGRAM = band_plot
+PROGRAM = wannier_plot
 FTN = gfortran
 FTNFLAGS = -llapack -lblas -O4
 

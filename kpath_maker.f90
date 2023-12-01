@@ -1,8 +1,9 @@
-subroutine make_kpath(nkpath, high_sym_pts, nkpt_per_path, nkp, kp, kdists)
+subroutine make_kpath(nkpath, high_sym_pts, nkpt_per_path, nkp, kp, kdists,    &
+        hsym_kdists)
 implicit none
     integer, intent(in) :: nkpath, nkpt_per_path, nkp
-    real*8, intent(in) :: high_sym_pts(nkpath+1,3)
-    real*8, intent(out) :: kp(nkp, 3), kdists(nkp)
+    real*8, intent(in) :: high_sym_pts(nkpath+1,3) 
+    real*8, intent(out) :: kp(nkp, 3), kdists(nkp), hsym_kdists(nkpath+1)
     integer :: ik, i, j
     real*8 :: kpath(3), dk(3)
 
@@ -18,5 +19,9 @@ implicit none
         end do
     end do
     kp(nkp, :)=high_sym_pts(nkpath+1, :)
+
+    do i=1, nkpath+1
+        hsym_kdists(i)=kdists((nkpt_per_path*(i-1))+1)
+    end do
 
 end subroutine make_kpath

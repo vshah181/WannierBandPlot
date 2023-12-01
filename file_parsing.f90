@@ -9,7 +9,8 @@ private
     character, allocatable :: high_sym_pt_symbols(:)
     integer :: num_bands, num_r_pts, nkpt_per_path, nkpath
     public num_bands, num_r_pts, weights, r_list, r_ham_list, read_hr,         &
-           write_bands, high_sym_pts, nkpath, nkpt_per_path, read_kpoints
+           write_bands, high_sym_pts, nkpath, nkpt_per_path, read_kpoints,     &
+           write_gnuplot_file
 contains
     subroutine read_hr
         integer :: hi_row, hi_col, ir, o_i, o_j
@@ -72,22 +73,39 @@ contains
         close(201)
     end subroutine write_bands
 
-    ! subroutine write_gnuplot_file
-    !     character(len=22) :: ofname'wannier_band.gnu'
-    !     logical :: file_exist
+    subroutine write_gnuplot_file(nkpath, hsym_kdists)
+        integer, intent(in) :: nkpath
+        real*8, intent(in) :: hsym_kdists(nkpath+1)
+        character(len=22) :: ofname='wannier_band.gnu', hsym_char
+        logical :: file_exist
+        integer :: it
 
-    !     inquire(file=ofname, exist=file_exist) 
-    !     if (file_exist) then 
-    !         open(202, file=ofname, action='write', status='replace')
-    !     else
-    !         open(202, file=ofname, status='new')
-    !     endif
 
-    !     write(103, fmt='(a)') 'set encoding iso_8858_1'
-    !     write(103, fmt='(a)', advance='no') 'set terminal pdfcairo enchanced'
-    !     write(103, fmt='(4a)', advance='no') ' font' '"' 'Arial' '"'
-    !     write(103, fmt='(a)') ' transparent size 17.8cm, 12.7cm'                   
-    !     write(103, fmt='(4a)') 'set output ' '"' 'wannier_band.pdf' '"'
+        inquire(file=ofname, exist=file_exist) 
+        if (file_exist) then 
+            open(202, file=ofname, action='write', status='replace')
+        else
+            open(202, file=ofname, status='new')
+        endif
 
-    ! end subroutine write_gnuplot_file
+        write(202, fmt='(a)') 'set encoding iso_8858_1'
+        write(202, fmt='(a)', advance='no') 'set terminal pdfcairo enchanced'
+        write(202, fmt='(4a)', advance='no') ' font', '"', 'Arial', '"'
+        write(202, fmt='(a)') ' transparent size 17.8cm, 12.7cm'                
+        write(202, fmt='(4a)') 'set output ', '"', 'wannier_band.pdf', '"'
+        write(202, fmt='(a)', advance='no') 'set xtics('
+        do it=1, nkpath+1
+            hsym_char=high_sym_pt_symbols(it)
+            if (trim(adjustl(hsym_char)) .eq. 'G') hsym_char = '{/Symbol \107}'
+            if (it .ne. nkpath+1) then 
+                write(202, fmt='(3a,1x,f10.7,1x)', advance='no') '"',          &
+                    trim(adjustl(hsym_char)), '"', hsym_kdists(it)
+            else 
+                write(202, fmt='(3a,1x,f10.7,1x)') '"',                        &
+                    trim(adjustl(hsym_char)), '"', hsym_kdists(it)
+            endif
+        end do
+        close(202)
+
+    end subroutine write_gnuplot_file
 end module file_parsing

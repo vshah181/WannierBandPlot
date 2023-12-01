@@ -1,7 +1,7 @@
 program band_plot
 use file_parsing
 implicit none
-    real*8, allocatable :: kp(:,:), kdists(:)
+    real*8, allocatable :: kp(:,:), kdists(:), hsym_kdists(:)
     integer :: nkp, ik
     integer*4 :: info, lwork
     real*8, allocatable :: rwork(:), energies(:, :)
@@ -9,8 +9,9 @@ implicit none
 
     call read_kpoints ! nkpath, high_sym_pts, nkpt_per_path
     nkp=1+(nkpt_per_path*nkpath)
-    allocate(kp(nkp, 3), kdists(nkp))
-    call make_kpath(nkpath, high_sym_pts, nkpt_per_path, nkp, kp, kdists)
+    allocate(kp(nkp, 3), kdists(nkp), hsym_kdists(1+nkpath))
+    call make_kpath(nkpath, high_sym_pts, nkpt_per_path, nkp, kp, kdists,      &
+        hsym_kdists)
 
     call read_hr ! r_list, r_ham_list, weights, num_r_pts, num_bands
     allocate(energies(nkp, num_bands), kham(num_bands, num_bands))
@@ -25,4 +26,5 @@ implicit none
     end do
 
     call write_bands(nkp, num_bands, kdists, energies)
+    call write_gnuplot_file(nkpath, hsym_kdists)
 end program band_plot
