@@ -47,7 +47,7 @@ contains
 
     subroutine write_bands(nkp, num_bands, kdists, energies)
         integer, intent(in) :: nkp, num_bands
-        real*8, intent(in) kdists(nkp), energies(nkp, num_bands)
+        real*8, intent(in) :: kdists(nkp), energies(nkp, num_bands)
         logical :: file_exist
         character(len=22) :: ofname='band.dat'
         integer :: ik, ib
