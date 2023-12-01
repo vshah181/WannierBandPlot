@@ -108,6 +108,11 @@ contains
         write(202, fmt='(4a)') 'set tics textcolor rgb ', '"','black','"'
         write(202, fmt='(4a)') 'set ylabel ', '"','{/:Italic E} (eV)', '"'
         write(202, fmt='(a)') 'unset key'
+        do it=1, nkpath+1
+            write(202, fmt='(a,f10.7,a,f10.7,a)') 'set arrow from ',           &
+            hsym_kdists(it), ', graph(0,0) to ', hsym_kdists(it),              &
+            ', graph(1,1) nohead'
+        end do
         write(202, fmt='(5a)') 'plot ', '"', 'wannier_band.dat', '"',          &
             'using 1:2 with line' 
         close(202)
