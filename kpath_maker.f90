@@ -1,8 +1,8 @@
 subroutine make_kpath(nkpath, high_sym_pts, nkpt_per_path, nkp, kp, kdists)
 implicit none
     integer, intent(in) :: nkpath, nkpt_per_path, nkp
-    real*8, intent(in) :: high_sym_pts(:,:)
-    real*8, intent(out) :: kp(:,:), kdists(:)
+    real*8, intent(in) :: high_sym_pts(nkpath+1,3)
+    real*8, intent(out) :: kp(nkp, 3), kdists(nkp)
     integer :: ik, i, j
     real*8 :: kpath(3), dk(3)
 

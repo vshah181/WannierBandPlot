@@ -19,7 +19,7 @@ contains
         read(101, *)num_bands, num_r_pts  ! bands and number of real-points
         allocate(weights(num_r_pts), r_list(num_r_pts, 3),                     &
                  r_ham_list(num_r_pts, num_bands, num_bands))
-        read(1, *)weights ! degeneracy of each Wigner-Seitz grid point
+        read(101, *)weights ! degeneracy of each Wigner-Seitz grid point
         do ir=1, num_r_pts
             do o_i=1, num_bands
                 do o_j=1, num_bands
