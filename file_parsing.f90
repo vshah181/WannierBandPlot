@@ -64,7 +64,7 @@ contains
         endif
 
         do ib=1, num_bands
-            if(ib .gt. 1)  write(201, fmt='(a)') ' '
+            if(ib .ne. 1)  write(201, fmt='(a)') ' '
             do ik=1, nkp
                 write(201, fmt='(2f12.7)') kdists(ik), energies(ik, ib)
             end do
