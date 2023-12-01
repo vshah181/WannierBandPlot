@@ -45,9 +45,6 @@ contains
         end do
         close(102)
         nkpath=nkpath-1
-        do i=1,nkpath+1
-            write(*,*) high_sym_pts(i,:), high_sym_pt_symbols(i)
-        end do
     end subroutine read_kpoints
 
     subroutine write_bands(nkp, num_bands, kdists, energies)
@@ -88,9 +85,9 @@ contains
             open(202, file=ofname, status='new')
         endif
 
-        write(202, fmt='(a)') 'set encoding iso_8858_1'
-        write(202, fmt='(a)', advance='no') 'set terminal pdfcairo enchanced'
-        write(202, fmt='(4a)', advance='no') ' font', '"', 'Arial', '"'
+        write(202, fmt='(a)') 'set encoding iso_8859_1'
+        write(202, fmt='(a)', advance='no') 'set terminal pdfcairo enhanced'
+        write(202, fmt='(4a)', advance='no') ' font ', '"', 'Arial', '"'
         write(202, fmt='(a)') ' transparent size 17.8cm, 12.7cm'                
         write(202, fmt='(4a)') 'set output ', '"', 'wannier_band.pdf', '"'
         write(202, fmt='(a)', advance='no') 'set xtics('
@@ -98,14 +95,22 @@ contains
             hsym_char=high_sym_pt_symbols(it)
             if (trim(adjustl(hsym_char)) .eq. 'G') hsym_char = '{/Symbol \107}'
             if (it .ne. nkpath+1) then 
-                write(202, fmt='(3a,1x,f10.7,1x)', advance='no') '"',          &
-                    trim(adjustl(hsym_char)), '"', hsym_kdists(it)
+                write(202, fmt='(3a,1x,f10.7,a,1x)', advance='no') '"',        &
+                    trim(adjustl(hsym_char)), '"', hsym_kdists(it), ','
             else 
-                write(202, fmt='(3a,1x,f10.7,1x)') '"',                        &
-                    trim(adjustl(hsym_char)), '"', hsym_kdists(it)
+                write(202, fmt='(3a,1x,f10.7,a)') '"',                         &
+                    trim(adjustl(hsym_char)), '"', hsym_kdists(it), ')'
             endif
         end do
+        write(202, fmt='(5a)') 'set style line 10 lt 1 lc rgb ', '"', 'black', &
+            '"', ' lw 1'
+        write(202, fmt='(a)') 'set border ls 10'
+        write(202, fmt='(4a)') 'set tics textcolor rgb ', '"','black','"'
+        write(202, fmt='(4a)') 'set ylabel ', '"','{/:Italic E} (eV)', '"'
+        write(202, fmt='(a)') 'unset key'
+        write(202, fmt='(5a)') 'plot ', '"', 'wannier_band.dat', '"',          &
+            'using 1:2 with line' 
         close(202)
-
     end subroutine write_gnuplot_file
+
 end module file_parsing
