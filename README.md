@@ -17,9 +17,9 @@ Plot the bandstructures of wannier90 _hr.dat files using Fortran and gnuplot
 2. The number of orbitals. For example, if we are considering the *p* orbitals of BiTeI, this will be 3
 3. The size of the resulting figure, in inches(in) or centimetres(cm)
 ### Example
-seedname   SrTiO3
-norb       3
-figsize    6 4 in
+    seedname   SrTiO3
+    norb       3
+    figsize    6 4 in
 *Spaces must be used for separation! Tabs will cause errors!*
 
 ## kpoints file
