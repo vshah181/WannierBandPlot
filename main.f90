@@ -25,7 +25,7 @@ implicit none
             num_r_pts)
         call zheev('V', 'L', num_bands, kham, num_bands, energies(ik, :), work,&
             lwork, rwork, info)
-        call get_colours(num_bands, 3, kham, colours(:, ik, :))
+        call get_colours(num_bands, norb, kham, colours(:, ik, :))
     end do
 
     call write_bands(nkp, num_bands, kdists, energies, colours)

@@ -1,22 +1,48 @@
 module file_parsing
+use, intrinsic :: iso_fortran_env, only : iostat_end
 implicit none
 private
-    character(len=22), parameter :: hamiltonian="SrTiO3_hr.dat"
-    character(len=22), parameter :: kpt_file="kpoints"
+    character(len=99) :: hr_file, length_unit, seedname
+    character(len=22), parameter :: kpt_file="kpoints", input_file='INPUT'
     complex*16, allocatable :: r_ham_list(:, :, :)
     real*8, allocatable :: high_sym_pts(:, :)
+    real*8 :: width, height
     integer, allocatable :: r_list(:, :), weights(:)
     character, allocatable :: high_sym_pt_symbols(:)
-    integer :: num_bands, num_r_pts, nkpt_per_path, nkpath
+    integer :: num_bands, num_r_pts, nkpt_per_path, nkpath, norb
     public num_bands, num_r_pts, weights, r_list, r_ham_list, read_hr,         &
            write_bands, high_sym_pts, nkpath, nkpt_per_path, read_kpoints,     &
-           write_gnuplot_file
+           write_gnuplot_file, norb
 contains
+    subroutine read_input
+        character(len=99) :: label, ival, line, temp_line
+        integer :: i, eof
+        open(100, file=input_file)
+        do while(eof .ne. iostat_end)
+            read(100, '(a)', iostat=eof) line
+            temp_line=adjustl(line)
+            i=index(temp_line, ' ')
+            label=temp_line(1:i)
+            ival=temp_line(1+i:99)
+            if(trim(adjustl(label)) .eq. 'seedname') then
+                seedname=trim(adjustl(ival))
+                write(hr_file, fmt='(2a)') trim(adjustl(seedname)), '_hr.dat'
+            else if(trim(adjustl(label)) .eq. 'norb') then
+                read(ival, *) norb
+            else if(trim(adjustl(label)) .eq. 'figsize') then
+                read(ival, *) width, height, length_unit
+            end if
+        end do
+        close(100)
+    end subroutine read_input
+
     subroutine read_hr
         integer :: hi_row, hi_col, ir, o_i, o_j
         real*8 :: rp, ip
 
-        open(101, file=hamiltonian)
+        call read_input
+
+        open(101, file=hr_file)
         read(101, *)
         read(101, *)num_bands, num_r_pts  ! bands and number of real-points
         allocate(weights(num_r_pts), r_list(num_r_pts, 3),                     &
@@ -52,8 +78,9 @@ contains
         real*8, intent(in) :: kdists(nkp), energies(nkp, num_bands),           &
             colours(3, nkp, num_bands)
         logical :: file_exist
-        character(len=22) :: ofname='wannier_band.dat'
+        character(len=22) :: ofname
         integer :: ik, ib, red, green, blue
+        write(ofname, '(2a)') trim(adjustl(seedname)), '_band.dat'
 
         inquire(file=ofname, exist=file_exist) 
         if (file_exist) then 
@@ -78,10 +105,12 @@ contains
     subroutine write_gnuplot_file(nkpath, hsym_kdists)
         integer, intent(in) :: nkpath
         real*8, intent(in) :: hsym_kdists(nkpath+1)
-        character(len=22) :: ofname='wannier_band.gnu', hsym_char
+        character(len=22) :: ofname, hsym_char, dfname, pdfname
         logical :: file_exist
         integer :: it
-
+        write(ofname, '(2a)') trim(adjustl(seedname)), '_band.gnu'
+        write(dfname, '(2a)') trim(adjustl(seedname)), '_band.dat'
+        write(pdfname, '(2a)') trim(adjustl(seedname)), '_band.pdf'
 
         inquire(file=ofname, exist=file_exist) 
         if (file_exist) then 
@@ -93,8 +122,9 @@ contains
         write(202, fmt='(a)') 'set encoding iso_8859_1'
         write(202, fmt='(a)', advance='no') 'set terminal pdfcairo enhanced'
         write(202, fmt='(4a)', advance='no') ' font ', '"', 'Arial', '"'
-        write(202, fmt='(a)') ' transparent size 17.8cm, 12.7cm'                
-        write(202, fmt='(4a)') 'set output ', '"', 'wannier_band.pdf', '"'
+        write(202, fmt='(a,f7.3,2a,f7.3,a)') ' transparent size ', width,      &
+            trim(adjustl(length_unit)), ', ', height, trim(adjustl(length_unit))
+        write(202, fmt='(4a)') 'set output ', '"', trim(adjustl(pdfname)), '"'
         write(202, fmt='(a)', advance='no') 'set xtics('
         do it=1, nkpath+1
             hsym_char=high_sym_pt_symbols(it)
@@ -119,8 +149,8 @@ contains
             hsym_kdists(it), ', graph(0,0) to ', hsym_kdists(it),              &
             ', graph(1,1) nohead'
         end do
-        write(202, fmt='(5a)') 'plot ', '"', 'wannier_band.dat', '"',          &
-            'using 1:2:(rgb($3,$4,$5)) with line lw 2.0 lc rgb variable' 
+        write(202, fmt='(5a)') 'plot ', '"', trim(adjustl(dfname)), '"',       &
+            ' using 1:2:(rgb($3,$4,$5)) with line lw 2.0 lc rgb variable' 
         close(202)
     end subroutine write_gnuplot_file
 
