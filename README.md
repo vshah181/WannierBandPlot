@@ -13,7 +13,7 @@ Plot the bandstructures of wannier90 _hr.dat files using Fortran and gnuplot
 
 ## Master input file
 - This file needs the filename 'INPUT'
-1. *seedname* (eg KTaO3, SrTiO3, BiTeI etc...)
+1. *seedname* (eg KTaO<sub>3</sub>, SrTiO<sub>3</sub>, BiTeI etc...)
 2. The number of orbitals. For example, if we are considering the *p* orbitals of BiTeI, this will be 3
 3. The size of the resulting figure, in inches(in) or centimetres(cm)
 ### Example
