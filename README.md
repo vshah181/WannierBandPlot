@@ -16,10 +16,12 @@ Plot the bandstructures of wannier90 _hr.dat files using Fortran and gnuplot
 1. *seedname* (eg KTaO<sub>3</sub>, SrTiO<sub>3</sub>, BiTeI etc...)
 2. The number of orbitals. For example, if we are considering the *p* orbitals of BiTeI, this will be 3
 3. The size of the resulting figure, in inches(in) or centimetres(cm)
+4. The basis, the current version of wannier90 the hr file in the up, down, up down... basis whereas the old version writes up, up ..., up, down, down, ..., down
 ### Example
     seedname   SrTiO3
     norb       3
     figsize    6 4 in
+    basis      uudd
 *Spaces must be used for separation! Tabs will cause errors!*
 
 ## kpoints file

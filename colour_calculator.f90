@@ -1,4 +1,5 @@
 module colour_calculation
+use file_parsing, only : basis
 implicit none
 private
 public get_colours
@@ -19,18 +20,31 @@ contains
             hsl=(/ hues(ih), 1d0, 0.5d0 /)
             call hsl_to_rgb(hsl, base_colours(:, ih))
         end do
-
-        do ib=1, num_bands
-            eigenvector=k_ham(:, ib)
-            do io=1, num_bands, n_orb
-                miniket = eigenvector(io:io+n_orb-1)
-                do jo=1, n_orb
-                    element=miniket(jo)*dconjg(miniket(jo))
-                    colours(:, ib)=colours(:, ib)                              &
-                    +(real(element)*base_colours(:, jo))
+        if(trim(adjustl(basis)) .eq. 'uudd') then 
+            do ib=1, num_bands
+                eigenvector=k_ham(:, ib)
+                do io=1, num_bands, n_orb
+                    miniket = eigenvector(io:io+n_orb-1)
+                    do jo=1, n_orb
+                        element=miniket(jo)*dconjg(miniket(jo))
+                        colours(:, ib)=colours(:, ib)                          &
+                        +(real(element)*base_colours(:, jo))
+                    end do
                 end do
             end do
-        end do
+        elseif(trim(adjustl(basis)) .eq. 'udud') then
+            do ib=1, num_bands
+                eigenvector=k_ham(:, ib)
+                do io=1, num_bands, 2
+                    miniket((io+1)/2) = dconjg(eigenvector(io))*eigenvector(io)&
+                        +dconjg(eigenvector(io+1))*eigenvector(io+1)
+                end do
+                do jo=1, n_orb
+                    colours(:, ib)=colours(:, ib)                              &
+                        +(real(miniket(jo))*base_colours(:, jo))
+                end do
+            end do
+        end if
     end subroutine get_colours
 
     subroutine hsl_to_rgb(hsl, rgb)
