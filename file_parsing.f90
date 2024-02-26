@@ -39,7 +39,6 @@ contains
             else if(trim(adjustl(label)) .eq. 'e_fermi') then
                 read(ival, *) e_fermi
                 e_fermi_present = .true.
-                print*, e_fermi
             end if
         end do
         close(100)
@@ -168,13 +167,11 @@ contains
         end do
         if (e_fermi_present) then
             write(202, fmt='(5a)') 'plot ', '"', trim(adjustl(dfname)), '"',   &
-                ' using 1:$2-e_f:(rgb($3,$4,$5)) with l lw 2.0 lc rgb variable' 
+                ' u 1:($2-e_f):(rgb($3,$4,$5)) with l lw 2.0 lc rgb variable' 
         else
             write(202, fmt='(5a)') 'plot ', '"', trim(adjustl(dfname)), '"',   &
-                ' using 1:2:(rgb($3,$4,$5)) with l lw 2.0 lc rgb variable' 
+                ' u 1:2:(rgb($3,$4,$5)) with l lw 2.0 lc rgb variable' 
         end if
-        write(202, fmt='(5a)') 'plot ', '"', trim(adjustl(dfname)), '"',       &
-            ' using 1:2:(rgb($3,$4,$5)) with line lw 2.0 lc rgb variable' 
         close(202)
     end subroutine write_gnuplot_file
 
