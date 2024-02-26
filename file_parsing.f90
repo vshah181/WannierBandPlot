@@ -105,7 +105,7 @@ contains
                 green=nint(colours(2, ik, ib))
                 blue=nint(colours(3, ik, ib))
                 write(201, fmt='(2f12.7,3i5)') kdists(ik),                     &
-                    energies(ik, ib) - e_fermi, red, green, blue
+                    energies(ik, ib), red, green, blue
             end do
         end do
         close(201)
@@ -134,6 +134,9 @@ contains
         write(202, fmt='(a,f7.3,2a,f7.3,a)') ' transparent size ', width,      &
             trim(adjustl(length_unit)), ', ', height, trim(adjustl(length_unit))
         write(202, fmt='(4a)') 'set output ', '"', trim(adjustl(pdfname)), '"'
+        if (e_fermi_present) then
+            write(202, fmt='(a,1x,f10.7)') 'e_f =', e_fermi
+        end if
         write(202, fmt='(a)', advance='no') 'set xtics('
         do it=1, nkpath+1
             hsym_char=high_sym_pt_symbols(it)
@@ -163,6 +166,13 @@ contains
             hsym_kdists(it), ', graph(0,0) to ', hsym_kdists(it),              &
             ', graph(1,1) nohead'
         end do
+        if (e_fermi_present) then
+            write(202, fmt='(5a)') 'plot ', '"', trim(adjustl(dfname)), '"',   &
+                ' using 1:$2-e_f:(rgb($3,$4,$5)) with l lw 2.0 lc rgb variable' 
+        else
+            write(202, fmt='(5a)') 'plot ', '"', trim(adjustl(dfname)), '"',   &
+                ' using 1:2:(rgb($3,$4,$5)) with l lw 2.0 lc rgb variable' 
+        end if
         write(202, fmt='(5a)') 'plot ', '"', trim(adjustl(dfname)), '"',       &
             ' using 1:2:(rgb($3,$4,$5)) with line lw 2.0 lc rgb variable' 
         close(202)
