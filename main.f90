@@ -28,7 +28,7 @@ implicit none
             num_r_pts)
         call zheev('V', 'L', num_bands, kham, num_bands, energies(ik, :), work,&
             lwork, rwork, info)
-        if (norb .neq. 1) then
+        if (norb .ne. 1) then
             call get_colours(num_bands, norb, kham, colours(:, ik, :))
         end if
     end do
