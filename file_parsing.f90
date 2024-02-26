@@ -6,10 +6,11 @@ private
     character(len=22), parameter :: kpt_file="kpoints", input_file='INPUT'
     complex*16, allocatable :: r_ham_list(:, :, :)
     real*8, allocatable :: high_sym_pts(:, :)
-    real*8 :: width, height
+    real*8 :: width, height, e_fermi
     integer, allocatable :: r_list(:, :), weights(:)
     character, allocatable :: high_sym_pt_symbols(:)
     integer :: num_bands, num_r_pts, nkpt_per_path, nkpath, norb
+    logical :: e_fermi_present
     public num_bands, num_r_pts, weights, r_list, r_ham_list, read_hr,         &
            write_bands, high_sym_pts, nkpath, nkpt_per_path, read_kpoints,     &
            write_gnuplot_file, norb, basis
@@ -18,6 +19,8 @@ contains
         character(len=99) :: label, ival, line, temp_line
         integer :: i, eof
         open(100, file=input_file)
+        e_fermi_present = .false.
+        e_fermi = 0d0
         do while(eof .ne. iostat_end)
             read(100, '(a)', iostat=eof) line
             temp_line=adjustl(line)
@@ -33,6 +36,10 @@ contains
                 read(ival, *) width, height, length_unit
             else if(trim(adjustl(label)) .eq. 'basis') then
                 read(ival, *) basis
+            else if(trim(adjustl(label)) .eq. 'e_fermi') then
+                read(ival, *) e_fermi
+                e_fermi_present = .true.
+                print*, e_fermi
             end if
         end do
         close(100)
@@ -97,8 +104,8 @@ contains
                 red=nint(colours(1, ik, ib))
                 green=nint(colours(2, ik, ib))
                 blue=nint(colours(3, ik, ib))
-                write(201, fmt='(2f12.7,3i5)') kdists(ik), energies(ik, ib),   &
-                    red, green, blue
+                write(201, fmt='(2f12.7,3i5)') kdists(ik),                     &
+                    energies(ik, ib) - e_fermi, red, green, blue
             end do
         end do
         close(201)
@@ -143,7 +150,12 @@ contains
             '"', ' lw 1'
         write(202, fmt='(a)') 'set border ls 10'
         write(202, fmt='(4a)') 'set tics textcolor rgb ', '"','black','"'
-        write(202, fmt='(4a)') 'set ylabel ', '"','{/:Italic E} (eV)', '"'
+        if (e_fermi_present) then 
+            write(202, fmt='(4a)') 'set ylabel ', '"',                         &
+                '{/:Italic E - E_{F}} (eV)', '"'
+        else 
+            write(202, fmt='(4a)') 'set ylabel ', '"','{/:Italic E} (eV)', '"'
+        end if
         write(202, fmt='(a)') 'unset key'
         write(202, fmt='(a)') 'rgb(r,g,b) = int(r)*65536 + int(g)*256 + int(b)'
         do it=1, nkpath+1
