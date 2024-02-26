@@ -17,9 +17,9 @@ implicit none
     call read_hr ! r_list, r_ham_list, weights, num_r_pts, num_bands
     allocate(energies(nkp, num_bands), kham(num_bands, num_bands),             &
         colours(3, nkp, num_bands))
-    colours(1, :, :) = 0.5803922
-    colours(2, :, :) = 0.4039216
-    colours(3, :, :) = 0.7411765
+    colours(1, :, :) = 100
+    colours(2, :, :) = 110
+    colours(3, :, :) = 250
 
     lwork=max(1, 2*num_bands-1)
     allocate(work(max(1, lwork)), rwork(max(1, 3*num_bands-2)))
