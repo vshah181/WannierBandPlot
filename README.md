@@ -17,11 +17,13 @@ Plot the bandstructures of wannier90 _hr.dat files using Fortran and gnuplot
 2. The number of orbitals. For example, if we are considering the *p* orbitals of BiTeI, this will be 3
 3. The size of the resulting figure, in inches(in) or centimetres(cm)
 4. The basis, the current version of wannier90 the hr file in the up, down, up down... basis whereas the old version writes up, up ..., up, down, down, ..., down
+5. The fermi level in electron-volts. This is an optional tag. If specified, this value will be subtracted from the energies when the band structure is plotted 
 ### Example
     seedname   SrTiO3
     norb       3
     figsize    6 4 in
     basis      uudd
+    e_fermi    7.753
 *Spaces must be used for separation! Tabs will cause errors!*
 
 ## kpoints file
