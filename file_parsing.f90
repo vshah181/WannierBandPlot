@@ -2,10 +2,11 @@ module file_parsing
 use, intrinsic :: iso_fortran_env, only : iostat_end
 implicit none
 private
-    character(len=99) :: hr_file, length_unit, seedname, basis
+    character(len=99) :: hr_file, length_unit, seedname, basis, nnkp_file
     character(len=22), parameter :: kpt_file="kpoints", input_file='INPUT'
     complex*16, allocatable :: r_ham_list(:, :, :)
     real*8, allocatable :: high_sym_pts(:, :)
+    real*8 :: bvec(3, 3)
     real*8 :: width, height, e_fermi
     integer, allocatable :: r_list(:, :), weights(:)
     character, allocatable :: high_sym_pt_symbols(:)
@@ -13,7 +14,7 @@ private
     logical :: e_fermi_present
     public num_bands, num_r_pts, weights, r_list, r_ham_list, read_hr,         &
            write_bands, high_sym_pts, nkpath, nkpt_per_path, read_kpoints,     &
-           write_gnuplot_file, norb, basis
+           write_gnuplot_file, norb, basis, bvec
 contains
     subroutine read_input
         character(len=99) :: label, ival, line, temp_line
@@ -30,6 +31,7 @@ contains
             if(trim(adjustl(label)) .eq. 'seedname') then
                 seedname=trim(adjustl(ival))
                 write(hr_file, fmt='(2a)') trim(adjustl(seedname)), '_hr.dat'
+                write(nnkp_file, fmt='(2a)') trim(adjustl(seedname)), '.nnkp'
             else if(trim(adjustl(label)) .eq. 'norb') then
                 read(ival, *) norb
             else if(trim(adjustl(label)) .eq. 'figsize') then
@@ -49,6 +51,7 @@ contains
         real*8 :: rp, ip
 
         call read_input
+        call read_nnkp
 
         open(101, file=hr_file)
         read(101, *)
@@ -67,6 +70,23 @@ contains
         end do
         close(101)
     end subroutine read_hr
+
+    subroutine read_nnkp
+        character(len=99) :: line
+        integer :: eof, i
+
+        open (103, file=nnkp_file)
+
+        do while(eof .ne. iostat_end)
+            read(103, '(a)', iostat=eof) line
+            if (trim(adjustl(line)) .eq. 'begin recip_lattice') then
+                do i=1, 3
+                    read(103, *, iostat=eof) bvec(i, :)
+                end do
+            end if
+        end do
+        close(103)
+    end subroutine read_nnkp
 
     subroutine read_kpoints
         integer :: i

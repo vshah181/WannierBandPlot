@@ -9,12 +9,12 @@ implicit none
     complex*16, allocatable :: work(:), kham(:, :)
 
     call read_kpoints ! nkpath, high_sym_pts, nkpt_per_path
+    call read_hr ! r_list, r_ham_list, weights, num_r_pts, num_bands
     nkp=1+(nkpt_per_path*nkpath)
     allocate(kp(nkp, 3), kdists(nkp), hsym_kdists(1+nkpath))
     call make_kpath(nkpath, high_sym_pts, nkpt_per_path, nkp, kp, kdists,      &
         hsym_kdists)
 
-    call read_hr ! r_list, r_ham_list, weights, num_r_pts, num_bands
     allocate(energies(nkp, num_bands), kham(num_bands, num_bands),             &
         colours(3, nkp, num_bands))
     colours(1, :, :) = 100
