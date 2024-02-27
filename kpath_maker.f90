@@ -10,13 +10,11 @@ implicit none
     real*8 :: kpath(3), dk(3), abs_dk(3), abs_kpath(3)
 
     do i=1, 3
-        write(*, fmt='(3f10.6)') bvec(i, :)
     end do
     do i=1, nkpath+1
         abs_hsym_pts(i, :) = high_sym_pts(i, 1) * bvec(1, :)                   &
                            + high_sym_pts(i, 2) * bvec(2, :)                   &
                            + high_sym_pts(i, 3) * bvec(3, :)
-        write(*, fmt='(3f11.7)') abs_hsym_pts(i, :)
     end do
     ik=1
     kdists(1) = 0d0
