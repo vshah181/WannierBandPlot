@@ -4,7 +4,7 @@ Plot the bandstructures of wannier90 _hr.dat files using Fortran and gnuplot
 *Input files:* 
 - First is the master input file.
 - Second is the _hr.dat output file from a wannier90 calculation. This needs the filename ’*seedname*_hr.dat'
-- Third is the .nnkp file. This needs the filename ’*seedname*_hr.dat'
+- Third is the .nnkp file. This needs the filename ’*seedname*.nnkp'
 - Fourth is a kpoints file.
   
 *Output files:*
