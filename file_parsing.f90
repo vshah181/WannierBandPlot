@@ -6,7 +6,7 @@ private
     character(len=22), parameter :: kpt_file="kpoints", input_file='INPUT'
     complex*16, allocatable :: r_ham_list(:, :, :)
     real*8, allocatable :: high_sym_pts(:, :)
-    real*8 :: bvec(3, 3)
+    real*8 :: bvec(3, 3), ylims(2)
     real*8 :: width, height, e_fermi
     integer, allocatable :: r_list(:, :), weights(:)
     character, allocatable :: high_sym_pt_symbols(:)
@@ -22,6 +22,7 @@ contains
         open(100, file=input_file)
         e_fermi_present = .false.
         e_fermi = 0d0
+        ylims = 0d0
         do while(eof .ne. iostat_end)
             read(100, '(a)', iostat=eof) line
             temp_line=adjustl(line)
@@ -41,6 +42,8 @@ contains
             else if(trim(adjustl(label)) .eq. 'e_fermi') then
                 read(ival, *) e_fermi
                 e_fermi_present = .true.
+            else if(trim(adjustl(label)) .eq. 'yrange') then
+                read(ival, *) ylims
             end if
         end do
         close(100)
@@ -177,6 +180,10 @@ contains
                 '{/:Italic E - E_{F}} (eV)', '"'
         else 
             write(202, fmt='(4a)') 'set ylabel ', '"','{/:Italic E} (eV)', '"'
+        end if
+        if (ylims(1) .ne. ylims(2)) then
+            write(202, fmt='(a,f9.6,1x,a,1x,f9.6,a)') 'set yrange [', ylims(1),&
+                'to', ylims(2), ']' 
         end if
         write(202, fmt='(a)') 'unset key'
         write(202, fmt='(a)') 'rgb(r,g,b) = int(r)*65536 + int(g)*256 + int(b)'
