@@ -186,7 +186,7 @@ contains
             ', graph(1,1) nohead lw 1.5'
         end do
         if (e_fermi_present) then
-            write(202, fmt='(2a)') 'set arrow from graph 0, first 0.0 to '     &
+            write(202, fmt='(2a)') 'set arrow from graph 0, first 0.0 to ',    &
                 'graph 1, first 0.0 nohead lw 1.5 dt 3'
             write(202, fmt='(5a)') 'plot ', '"', trim(adjustl(dfname)), '"',   &
                 ' u 1:($2-e_f):(rgb($3,$4,$5)) with l lw 2.0 lc rgb variable' 
