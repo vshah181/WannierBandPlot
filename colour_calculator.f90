@@ -26,7 +26,7 @@ contains
                 do io=1, num_bands, n_orb
                     miniket = eigenvector(io:io+n_orb-1)
                     do jo=1, n_orb
-                        element=miniket(jo)*dconjg(miniket(jo))
+                        element=real(miniket(jo)*dconjg(miniket(jo)))
                         colours(:, ib)=colours(:, ib)                          &
                         +(real(element)*base_colours(:, jo))
                     end do
@@ -53,6 +53,7 @@ contains
         real*8 :: chroma, hp, x, rgb_p(3), m
 
         chroma=(1-dabs(2*hsl(3)-1))*hsl(2)
+        rgb_p = 0d0
         hp=hsl(1)/60
         x=chroma*(1-dabs(dmod(hp, 2d0)-1))
         if((0d0 .le. hp) .and. (hp .lt. 1d0)) then
