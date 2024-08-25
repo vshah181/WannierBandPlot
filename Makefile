@@ -1,7 +1,7 @@
 OBJFILES = constants.o file_parsing.o fourier_transform.o kpath_maker.o colour_calculator.o main.o
 PROGRAM = wannier_plot
 FTN = gfortran
-FTNFLAGS = -llapack -lblas -O4 -Wall -Wextra -pedantic
+FTNFLAGS = -llapack -lblas -O4 -Wall -Wextra -std=f2008
 
 all: $(PROGRAM)
 

@@ -1,4 +1,5 @@
 module colour_calculation
+use, intrinsic :: iso_fortran_env, only: real64
 use file_parsing, only : basis
 implicit none
 private
@@ -6,10 +7,10 @@ public get_colours
 contains
     subroutine get_colours(num_bands, n_orb, k_ham, colours)
         integer, intent(in) :: num_bands, n_orb
-        complex*16, intent(in) :: k_ham(num_bands, num_bands)
-        real*8, intent(out) :: colours(3, num_bands)
-        complex*16 :: eigenvector(num_bands), miniket(n_orb)
-        real*8 :: hue_step, hues(n_orb), element, hsl(3),   &
+        complex (real64), intent(in) :: k_ham(num_bands, num_bands)
+        real (real64), intent(out) :: colours(3, num_bands)
+        complex (real64) :: eigenvector(num_bands), miniket(n_orb)
+        real (real64) :: hue_step, hues(n_orb), element, hsl(3),   &
             base_colours(3, n_orb)
         integer :: ib, ih, io, jo
         colours = 0d0
@@ -26,7 +27,7 @@ contains
                 do io=1, num_bands, n_orb
                     miniket = eigenvector(io:io+n_orb-1)
                     do jo=1, n_orb
-                        element=real(miniket(jo)*dconjg(miniket(jo)))
+                        element=real(miniket(jo)*conjg(miniket(jo)))
                         colours(:, ib)=colours(:, ib)                          &
                         +(real(element)*base_colours(:, jo))
                     end do
@@ -36,8 +37,8 @@ contains
             do ib=1, num_bands
                 eigenvector=k_ham(:, ib)
                 do io=1, num_bands, 2
-                    miniket((io+1)/2) = dconjg(eigenvector(io))*eigenvector(io)&
-                        +dconjg(eigenvector(io+1))*eigenvector(io+1)
+                    miniket((io+1)/2) = conjg(eigenvector(io))*eigenvector(io)&
+                        +conjg(eigenvector(io+1))*eigenvector(io+1)
                 end do
                 do jo=1, n_orb
                     colours(:, ib)=colours(:, ib)                              &
@@ -48,9 +49,9 @@ contains
     end subroutine get_colours
 
     subroutine hsl_to_rgb(hsl, rgb)
-        real*8, intent(in) :: hsl(3)
-        real*8, intent(out) :: rgb(3)
-        real*8 :: chroma, hp, x, rgb_p(3), m
+        real (real64), intent(in) :: hsl(3)
+        real (real64), intent(out) :: rgb(3)
+        real (real64) :: chroma, hp, x, rgb_p(3), m
 
         chroma=(1-dabs(2*hsl(3)-1))*hsl(2)
         rgb_p = 0d0

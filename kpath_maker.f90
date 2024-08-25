@@ -1,13 +1,14 @@
 subroutine make_kpath(nkpath, high_sym_pts, nkpt_per_path, nkp, kp, kdists,    &
         hsym_kdists)
 use file_parsing, only : bvec
+use, intrinsic :: iso_fortran_env, only: real64, int32
 implicit none
     integer, intent(in) :: nkpath, nkpt_per_path, nkp
-    real*8, intent(in) :: high_sym_pts(nkpath+1,3) 
-    real*8 :: abs_hsym_pts(nkpath+1, 3)
-    real*8, intent(out) :: kp(nkp, 3), kdists(nkp), hsym_kdists(nkpath+1)
+    real (real64), intent(in) :: high_sym_pts(nkpath+1,3) 
+    real (real64) :: abs_hsym_pts(nkpath+1, 3)
+    real (real64), intent(out) :: kp(nkp, 3), kdists(nkp), hsym_kdists(nkpath+1)
     integer :: ik, i, j
-    real*8 :: kpath(3), dk(3), abs_dk(3), abs_kpath(3)
+    real (real64) :: kpath(3), dk(3), abs_dk(3), abs_kpath(3)
 
     do i=1, 3
     end do

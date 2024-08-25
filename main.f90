@@ -1,12 +1,13 @@
 program band_plot
+use, intrinsic :: iso_fortran_env, only: int32, real64
 use file_parsing
 use colour_calculation, only : get_colours
 implicit none
-    real*8, allocatable :: kp(:,:), kdists(:), hsym_kdists(:)
+    real (real64), allocatable :: kp(:,:), kdists(:), hsym_kdists(:)
     integer :: nkp, ik
-    integer*4 :: info, lwork
-    real*8, allocatable :: rwork(:), energies(:, :), colours(:, :, :)
-    complex*16, allocatable :: work(:), kham(:, :)
+    integer (int32) :: info, lwork
+    real (real64), allocatable :: rwork(:), energies(:, :), colours(:, :, :)
+    complex (real64), allocatable :: work(:), kham(:, :)
 
     call read_kpoints ! nkpath, high_sym_pts, nkpt_per_path
     call read_hr ! r_list, r_ham_list, weights, num_r_pts, num_bands

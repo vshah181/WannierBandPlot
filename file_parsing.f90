@@ -1,13 +1,13 @@
 module file_parsing
-use, intrinsic :: iso_fortran_env, only : iostat_end
+use, intrinsic :: iso_fortran_env, only : iostat_end, real64
 implicit none
 private
     character(len=99) :: hr_file, length_unit, seedname, basis, nnkp_file
     character(len=22), parameter :: kpt_file="kpoints", input_file='INPUT'
-    complex*16, allocatable :: r_ham_list(:, :, :)
-    real*8, allocatable :: high_sym_pts(:, :)
-    real*8 :: bvec(3, 3), ylims(2)
-    real*8 :: width, height, e_fermi
+    complex (real64), allocatable :: r_ham_list(:, :, :)
+    real (real64), allocatable :: high_sym_pts(:, :)
+    real (real64) :: bvec(3, 3), ylims(2)
+    real (real64) :: width, height, e_fermi
     integer, allocatable :: r_list(:, :), weights(:)
     character, allocatable :: high_sym_pt_symbols(:)
     integer :: num_bands, num_r_pts, nkpt_per_path, nkpath, norb
@@ -51,7 +51,7 @@ contains
 
     subroutine read_hr
         integer :: hi_row, hi_col, ir, o_i, o_j
-        real*8 :: rp, ip
+        real (real64) :: rp, ip
 
         call read_input
         call read_nnkp
@@ -67,7 +67,7 @@ contains
                 do o_j=1, num_bands
                     read(101, *)r_list(ir, 1), r_list(ir, 2), r_list(ir, 3),   &
                               hi_row, hi_col, rp, ip
-                    r_ham_list(ir, hi_row, hi_col)=dcmplx(rp, ip)  
+                    r_ham_list(ir, hi_row, hi_col)=cmplx(rp, ip, kind=real64)  
                 end do
             end do
         end do
@@ -106,7 +106,7 @@ contains
 
     subroutine write_bands(nkp, num_bands, kdists, energies, colours)
         integer, intent(in) :: nkp, num_bands
-        real*8, intent(in) :: kdists(nkp), energies(nkp, num_bands),           &
+        real (real64), intent(in) :: kdists(nkp), energies(nkp, num_bands),    &
             colours(3, nkp, num_bands)
         logical :: file_exist
         character(len=22) :: ofname
@@ -135,7 +135,7 @@ contains
 
     subroutine write_gnuplot_file(nkpath, hsym_kdists)
         integer, intent(in) :: nkpath
-        real*8, intent(in) :: hsym_kdists(nkpath+1)
+        real (real64), intent(in) :: hsym_kdists(nkpath+1)
         character(len=22) :: ofname, hsym_char, dfname, pdfname
         logical :: file_exist
         integer :: it
