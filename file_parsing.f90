@@ -126,8 +126,11 @@ contains
                 red=nint(colours(1, ik, ib))
                 green=nint(colours(2, ik, ib))
                 blue=nint(colours(3, ik, ib))
-                write(201, fmt='(2f12.7,3i5)') kdists(ik),                     &
-                    energies(ik, ib), red, green, blue
+                if (norb .eq. 1) then
+                    write(201, fmt='(2f12.7)') kdists(ik), energies(ik, ib)
+                else
+                    write(201, fmt='(2f12.7,3i5)') kdists(ik),                 &
+                        energies(ik, ib), red, green, blue
             end do
         end do
         close(201)
@@ -192,15 +195,23 @@ contains
             hsym_kdists(it), ', graph(0,0) to ', hsym_kdists(it),              &
             ', graph(1,1) nohead lw 1.5'
         end do
-        if (e_fermi_present) then
-            write(202, fmt='(2a)') 'set arrow from graph 0, first 0.0 to ',    &
-                'graph 1, first 0.0 nohead lw 1.5 dt 3'
-            write(202, fmt='(5a)') 'plot ', '"', trim(adjustl(dfname)), '"',   &
-                ' u 1:($2-e_f):(rgb($3,$4,$5)) with l lw 2.0 lc rgb variable' 
+        if (norb .gt. 1) then
+            if (e_fermi_present) then
+                write(202, fmt='(5a)') 'plot ','"',trim(adjustl(dfname)),'" ', &
+                    'u 1:($2-e_f):(rgb($3,$4,$5)) with l lw 2.0 lc rgb variable' 
+            else
+                write(202, fmt='(5a)') 'plot ','"',trim(adjustl(dfname)),'" ', &
+                    'u 1:2:(rgb($3,$4,$5)) with l lw 2.0 lc rgb variable' 
+            end if
         else
-            write(202, fmt='(5a)') 'plot ', '"', trim(adjustl(dfname)), '"',   &
-                ' u 1:2:(rgb($3,$4,$5)) with l lw 2.0 lc rgb variable' 
-        end if
+            if (e_fermi_present) then
+                write(202, fmt='(8a)') 'plot ','"',trim(adjustl(dfname)),'" ', &
+                    'u 1:($2-e_f) with l lw 2.0 lc ', '"', '#646efa', '"' 
+            else
+                write(202, fmt='(8a)') 'plot ','"',trim(adjustl(dfname)),'" ', &
+                    'u 1:2 with l lw 2.0 lc ', '"', '#646efa', '"' 
+            end if
+        endif
         close(202)
     end subroutine write_gnuplot_file
 
