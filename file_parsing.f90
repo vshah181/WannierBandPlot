@@ -131,6 +131,7 @@ contains
                 else
                     write(201, fmt='(2f12.7,3i5)') kdists(ik),                 &
                         energies(ik, ib), red, green, blue
+                endif
             end do
         end do
         close(201)
